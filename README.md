@@ -1,6 +1,6 @@
-# Sprite Expression System
+# Spritelet Expression System
 
-Sprite Expression System provides a reusable AI skill (`spritelet-generator`) and a separate identity data store (`spritelet-identity`) for generating and publishing expressive mascot states.
+Spritelet Expression System provides a reusable AI skill (`spritelet-generator`) and a separate identity data store (`spritelet-identity`) for generating and publishing expressive mascot states.
 
 ## Project Structure
 
