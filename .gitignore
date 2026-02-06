@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# macOS
+.DS_Store
+
+# Local temp artifacts
+*.tmp
+
+# Runtime lock files
+.locks/

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Spritelet Generator"
+  short_description: "Generate mascot states from base identity image."
+  default_prompt: "Set up or run a Spritelet generation workflow with state signaling and Nano Banana Pro image requests."
