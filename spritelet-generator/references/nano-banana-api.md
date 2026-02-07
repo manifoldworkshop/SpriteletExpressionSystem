@@ -1,17 +1,17 @@
-# Nano Banana Pro API Notes
+# Image Generation API Notes
 
 Use Google Gemini-style multimodal request format with one reference image and one text prompt.
 
 ## Request Shape
 
-- `model`: set by environment, default `models/nano-banana-pro`
+- `model`: set by argument/env override, default `models/gemini-3-pro-image-preview`
 - `contents[0].parts`: include image `inline_data` and prompt text
 - `generation_config.response_modalities`: include `IMAGE`
 
 ## Minimal cURL Pattern
 
 ```bash
-curl -sS "https://generativelanguage.googleapis.com/v1beta/models/nano-banana-pro:generateContent?key=${GOOGLE_API_KEY}" \
+curl -sS "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent?key=${SPRITELET_GOOGLE_API_KEY}" \
   -H "Content-Type: application/json" \
   -d @request.json
 ```

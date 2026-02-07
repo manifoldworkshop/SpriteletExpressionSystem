@@ -51,9 +51,9 @@ def main() -> int:
     parser.add_argument("--root", required=True, help="Spritelet identity root")
     parser.add_argument("--identity-prompt", required=True, help="Identity prompt for the first base image")
     parser.add_argument("--output-path", default="assets/base.png", help="Relative output path for the base image")
-    parser.add_argument("--model", default="models/nano-banana-pro")
+    parser.add_argument("--model", default="models/gemini-3-pro-image-preview")
     parser.add_argument("--endpoint", default="https://generativelanguage.googleapis.com/v1beta/{model}:generateContent")
-    parser.add_argument("--api-key-env", default="GOOGLE_API_KEY")
+    parser.add_argument("--api-key-env", default="SPRITELET_GOOGLE_API_KEY")
     args = parser.parse_args()
 
     root = Path(args.root)

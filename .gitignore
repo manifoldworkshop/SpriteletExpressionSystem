@@ -10,3 +10,6 @@ __pycache__/
 
 # Runtime lock files
 .locks/
+
+# Local secrets
+.env.local

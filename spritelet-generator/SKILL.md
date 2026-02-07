@@ -1,6 +1,6 @@
 ---
 name: spritelet-generator
-description: "Generate and manage Spritelet mascot avatars from a base reference image plus state metadata, with low-cost publish signaling. Use when an AI agent needs to: (1) set up a Spritelet state store, (2) generate new spritelet images with Nano Banana Pro on Google APIs, (3) publish which image is currently active, (4) maintain a simple current-state pointer with timestamp, or (5) reuse existing state images from a catalog before generating new ones."
+description: "Generate and manage Spritelet mascot avatars from a base reference image plus state metadata, with low-cost publish signaling. Use when an AI agent needs to: (1) set up a Spritelet state store, (2) generate new spritelet images with Gemini image models on Google APIs, (3) publish which image is currently active, (4) maintain a simple current-state pointer with timestamp, or (5) reuse existing state images from a catalog before generating new ones."
 ---
 
 # Spritelet Generator
@@ -48,7 +48,7 @@ scripts/publish_spritelet_state.py \
 
 This command does:
 1. Check catalog for exact `simple_name` reuse.
-2. Reuse existing state image or call Nano Banana Pro API.
+2. Reuse existing state image or call image generation API.
 3. Save image under `states/` when generated.
 4. Upsert catalog entry.
 5. Publish `signals/current.json`.
@@ -67,7 +67,7 @@ If a matching catalog entry exists and file is present, reuse that `spritelet_pa
 4. Build generation prompt:
 If no reusable entry exists (or `--force-generate`), `build_prompt()` composes prompt text from `simple_name`, `description`, and `prompt_style`.
 5. Request image generation:
-`call_generation_api()` sends the multimodal request to Nano Banana Pro using the base reference image.
+`call_generation_api()` sends the multimodal request to the configured image model using the base reference image.
 6. Decode image payload:
 `extract_image_bytes()` reads image bytes from API response (`inline_data`/`inlineData`).
 7. Save state image:

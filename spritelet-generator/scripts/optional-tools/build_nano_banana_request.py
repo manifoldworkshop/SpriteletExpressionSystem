@@ -6,12 +6,12 @@ from pathlib import Path
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Build a Nano Banana Pro API request JSON from Spritelet state")
+    parser = argparse.ArgumentParser(description="Build an image generation API request JSON from Spritelet state")
     parser.add_argument("--root", required=True, help="Spritelet identity root")
     parser.add_argument("--simple-name", required=True, help="Simple state name")
     parser.add_argument("--description", required=True, help="State description")
     parser.add_argument("--base-image", help="Override base image path")
-    parser.add_argument("--model", default="models/nano-banana-pro", help="Model name")
+    parser.add_argument("--model", default="models/gemini-3-pro-image-preview", help="Model name")
     parser.add_argument("--output", default="-", help="Write JSON to file path or '-' for stdout")
     args = parser.parse_args()
 

@@ -78,9 +78,9 @@ def main() -> int:
     parser.add_argument("--root", required=True, help="Spritelet identity root")
     parser.add_argument("--simple-name", required=True)
     parser.add_argument("--description", required=True)
-    parser.add_argument("--model", default="models/nano-banana-pro")
+    parser.add_argument("--model", default="models/gemini-3-pro-image-preview")
     parser.add_argument("--endpoint", default="https://generativelanguage.googleapis.com/v1beta/{model}:generateContent")
-    parser.add_argument("--api-key-env", default="GOOGLE_API_KEY")
+    parser.add_argument("--api-key-env", default="SPRITELET_GOOGLE_API_KEY")
     parser.add_argument("--force-generate", action="store_true")
     args = parser.parse_args()
 

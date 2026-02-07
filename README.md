@@ -47,8 +47,28 @@ spritelet-generator/scripts/publish_spritelet_state.py \
 Set your API key before generation calls:
 
 ```bash
-export GOOGLE_API_KEY="<your-key>"
+export SPRITELET_GOOGLE_API_KEY="<your-key>"
 ```
+
+Recommended local setup:
+
+```bash
+cat > .env.local <<'EOF'
+export SPRITELET_GOOGLE_API_KEY="<your-key>"
+EOF
+source .env.local
+```
+
+## Image API Defaults
+
+- Default model: `models/gemini-3-pro-image-preview`
+- Default API key env var: `SPRITELET_GOOGLE_API_KEY`
+- Endpoint: `https://generativelanguage.googleapis.com/v1beta/{model}:generateContent`
+
+Both generation scripts support overrides with:
+- `--model`
+- `--api-key-env`
+- `--endpoint`
 
 ## License
 
