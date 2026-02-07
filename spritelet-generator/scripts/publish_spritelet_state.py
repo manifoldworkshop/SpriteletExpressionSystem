@@ -6,6 +6,7 @@ import os
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime, timezone
 from pathlib import Path
 
 from store_utils import (
@@ -36,7 +37,8 @@ def build_prompt(profile: dict, simple_name: str, description: str) -> str:
         "Use the provided reference image as identity lock for this mascot. "
         f"State name: {simple_name}. "
         f"State description: {description}. "
-        f"Style: {profile.get('prompt_style', '')}."
+        f"Style: {profile.get('prompt_style', '')}. "
+        "Choose a background that best supports the state description and emotion."
     )
 
 
@@ -73,6 +75,23 @@ def extract_image_bytes(response_payload: dict) -> bytes:
     raise SystemExit("No image bytes found in generation API response")
 
 
+def parse_utc_timestamp(value: str) -> datetime | None:
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(timezone.utc)
+    except ValueError:
+        return None
+
+
+def should_reuse_state(base_image: Path, state: dict) -> bool:
+    state_created_at = parse_utc_timestamp(state.get("created_at", ""))
+    if state_created_at is None:
+        return False
+    base_mtime = datetime.fromtimestamp(base_image.stat().st_mtime, tz=timezone.utc)
+    return base_mtime <= state_created_at
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Reuse or generate and publish a Spritelet state")
     parser.add_argument("--root", required=True, help="Spritelet identity root")
@@ -81,6 +100,8 @@ def main() -> int:
     parser.add_argument("--model", default="models/gemini-3-pro-image-preview")
     parser.add_argument("--endpoint", default="https://generativelanguage.googleapis.com/v1beta/{model}:generateContent")
     parser.add_argument("--api-key-env", default="SPRITELET_GOOGLE_API_KEY")
+    parser.add_argument("--aspect-ratio", default="1:1", help="Output image aspect ratio (default: 1:1)")
+    parser.add_argument("--image-size", default="1K", help="Output image size tier (default: 1K)")
     parser.add_argument("--force-generate", action="store_true")
     args = parser.parse_args()
 
@@ -89,21 +110,26 @@ def main() -> int:
     if not profile:
         raise SystemExit("Missing spritelet.json; run init_spritelet_store.py first")
 
+    base_image = Path(profile["base_image_path"])
+    if not base_image.is_absolute():
+        base_image = (root / base_image).resolve()
+    if not base_image.exists():
+        raise SystemExit(f"Base image not found: {base_image}")
+
     key, state = resolve_catalog_state(root, args.simple_name)
     reused = False
     spritelet_path = ""
 
+    can_reuse = False
     if state and not args.force_generate:
         spritelet_path = state["spritelet_path"]
         if not resolve_store_path(root, spritelet_path).exists():
             raise SystemExit(f"Catalog points to missing file: {spritelet_path}")
+        can_reuse = should_reuse_state(base_image, state)
+
+    if can_reuse:
         reused = True
     else:
-        base_image = Path(profile["base_image_path"])
-        if not base_image.is_absolute():
-            base_image = (root / base_image).resolve()
-        if not base_image.exists():
-            raise SystemExit(f"Base image not found: {base_image}")
 
         prompt = build_prompt(profile, args.simple_name, args.description)
         request_payload = {
@@ -122,7 +148,13 @@ def main() -> int:
                     ],
                 }
             ],
-            "generation_config": {"response_modalities": ["IMAGE"]},
+            "generation_config": {
+                "response_modalities": ["IMAGE"],
+                "image_config": {
+                    "aspect_ratio": args.aspect_ratio,
+                    "image_size": args.image_size,
+                },
+            },
         }
         api_key = os.environ.get(args.api_key_env, "")
         if not api_key:
@@ -131,12 +163,17 @@ def main() -> int:
         response_payload = call_generation_api(args.model, api_key, args.endpoint, request_payload)
         image_bytes = extract_image_bytes(response_payload)
 
-        target_name = normalize_simple_name(args.simple_name)
-        out_rel = f"states/{target_name}.png"
-        out_abs = resolve_store_path(root, out_rel)
-        if out_abs.exists():
-            out_rel = f"states/{target_name}-{utc_now().replace(':', '').replace('-', '')}.png"
+        if state and not args.force_generate:
+            # Base image changed after state creation; regenerate in-place to keep catalog stable.
+            out_rel = state["spritelet_path"]
             out_abs = resolve_store_path(root, out_rel)
+        else:
+            target_name = normalize_simple_name(args.simple_name)
+            out_rel = f"states/{target_name}.png"
+            out_abs = resolve_store_path(root, out_rel)
+            if out_abs.exists():
+                out_rel = f"states/{target_name}-{utc_now().replace(':', '').replace('-', '')}.png"
+                out_abs = resolve_store_path(root, out_rel)
         out_abs.parent.mkdir(parents=True, exist_ok=True)
         out_abs.write_bytes(image_bytes)
         spritelet_path = out_rel
@@ -145,7 +182,8 @@ def main() -> int:
     with store_lock(root):
         catalog_path = root / "states" / "catalog.json"
         catalog = load_json(catalog_path, {"states": {}})
-        created_at = catalog.get("states", {}).get(key, {}).get("created_at", now)
+        existing_created_at = catalog.get("states", {}).get(key, {}).get("created_at")
+        created_at = existing_created_at if reused and existing_created_at else now
         catalog.setdefault("states", {})[key] = {
             "simple_name": key,
             "spritelet_path": spritelet_path,

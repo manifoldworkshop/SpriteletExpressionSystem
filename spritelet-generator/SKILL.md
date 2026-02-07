@@ -63,7 +63,8 @@ When `scripts/publish_spritelet_state.py` runs, it executes this order:
 2. Resolve state identity:
 `resolve_catalog_state()` normalizes `simple_name` and checks `states/catalog.json` for an existing state entry.
 3. Reuse-or-generate decision:
-If a matching catalog entry exists and file is present, reuse that `spritelet_path`.
+If a matching catalog entry exists and file is present, compare base image modified time against state `created_at`.
+Reuse only when base image is older than or equal to the state. If base image is newer, regenerate and overwrite the state image.
 4. Build generation prompt:
 If no reusable entry exists (or `--force-generate`), `build_prompt()` composes prompt text from `simple_name`, `description`, and `prompt_style`.
 5. Request image generation:
@@ -147,6 +148,12 @@ scripts/optional-tools/set_spritelet_signal.py --root <spritelet-root> --spritel
 
 ```bash
 scripts/optional-tools/generate_initial_base_image.py --root <spritelet-root> --identity-prompt "A cute fox robot mascot with round eyes and teal scarf."
+```
+
+- Reinitialize identity store (clear generated images and reset json/jsonl):
+
+```bash
+scripts/optional-tools/reinit_spritelet_store.py --root <spritelet-root>
 ```
 
 ## Safety Rules

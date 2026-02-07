@@ -28,7 +28,8 @@ def main() -> int:
         "Use the provided reference image as identity lock for this mascot. "
         f"State name: {args.simple_name}. "
         f"State description: {args.description}. "
-        f"Style: {profile.get('prompt_style', '')}."
+        f"Style: {profile.get('prompt_style', '')}. "
+        "Choose a background that best supports the state description and emotion."
     )
 
     image_bytes = base_image_path.read_bytes()

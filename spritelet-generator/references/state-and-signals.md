@@ -18,7 +18,7 @@ Assume these files live under the identity root (recommended: `<workspace>/sprit
 ```json
 {
   "base_image_path": "assets/base.png",
-  "prompt_style": "cute animal mascot, clean lines, expressive face, transparent background",
+  "prompt_style": "cute animal mascot, clean lines, expressive face",
   "created_at": "2026-02-06T09:30:04Z"
 }
 ```

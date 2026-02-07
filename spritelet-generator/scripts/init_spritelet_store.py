@@ -21,7 +21,7 @@ def main() -> int:
     with store_lock(root):
         profile = {
             "base_image_path": args.base_image,
-            "prompt_style": "cute animal mascot, clean lines, expressive face, transparent background",
+            "prompt_style": "cute animal mascot, clean lines, expressive face",
             "created_at": utc_now(),
         }
         atomic_write_json(root / "spritelet.json", profile)

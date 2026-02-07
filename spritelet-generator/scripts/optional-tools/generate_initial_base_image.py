@@ -54,6 +54,8 @@ def main() -> int:
     parser.add_argument("--model", default="models/gemini-3-pro-image-preview")
     parser.add_argument("--endpoint", default="https://generativelanguage.googleapis.com/v1beta/{model}:generateContent")
     parser.add_argument("--api-key-env", default="SPRITELET_GOOGLE_API_KEY")
+    parser.add_argument("--aspect-ratio", default="1:1", help="Output image aspect ratio (default: 1:1)")
+    parser.add_argument("--image-size", default="1K", help="Output image size tier (default: 1K)")
     args = parser.parse_args()
 
     root = Path(args.root)
@@ -68,7 +70,13 @@ def main() -> int:
     request_payload = {
         "model": args.model,
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
-        "generation_config": {"response_modalities": ["IMAGE"]},
+        "generation_config": {
+            "response_modalities": ["IMAGE"],
+            "image_config": {
+                "aspect_ratio": args.aspect_ratio,
+                "image_size": args.image_size,
+            },
+        },
     }
 
     api_key = os.environ.get(args.api_key_env, "")
