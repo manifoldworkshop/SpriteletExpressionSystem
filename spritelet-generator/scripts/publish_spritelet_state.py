@@ -102,7 +102,11 @@ def main() -> int:
     parser.add_argument("--api-key-env", default="SPRITELET_GOOGLE_API_KEY")
     parser.add_argument("--aspect-ratio", default="1:1", help="Output image aspect ratio (default: 1:1)")
     parser.add_argument("--image-size", default="1K", help="Output image size tier (default: 1K)")
-    parser.add_argument("--force-generate", action="store_true")
+    parser.add_argument(
+        "--force-generate",
+        action="store_true",
+        help="Always generate a fresh image; if state exists, overwrite its current spritelet_path",
+    )
     args = parser.parse_args()
 
     root = Path(args.root)
@@ -163,8 +167,8 @@ def main() -> int:
         response_payload = call_generation_api(args.model, api_key, args.endpoint, request_payload)
         image_bytes = extract_image_bytes(response_payload)
 
-        if state and not args.force_generate:
-            # Base image changed after state creation; regenerate in-place to keep catalog stable.
+        if state:
+            # Existing state path is overwritten for stale regeneration and force regeneration.
             out_rel = state["spritelet_path"]
             out_abs = resolve_store_path(root, out_rel)
         else:

@@ -1,4 +1,8 @@
-# Spritelet Expression System
+<p align="center">
+  <img src="spritelet-identity-example/assets/base.png" alt="Base Spritelet" width="260" />
+</p>
+
+<h1 align="center">Spritelet Expression System</h1>
 
 Spritelet Expression System provides a reusable AI skill (`spritelet-generator`) and a separate identity data store (`spritelet-identity`) for generating and publishing expressive mascot states.
 
@@ -6,6 +10,7 @@ Spritelet Expression System provides a reusable AI skill (`spritelet-generator`)
 
 - `spritelet-generator/`: Skill definition, references, and scripts
 - `spritelet-identity/`: Generated identity/state data (JSON + image paths)
+- `spritelet-identity-example/`: Example generated assets and metadata for documentation/review
 
 ## Key Concepts
 
@@ -49,6 +54,19 @@ spritelet-generator/scripts/publish_spritelet_state.py \
 spritelet-generator/scripts/optional-tools/reinit_spritelet_store.py \
   --root spritelet-identity
 ```
+
+## Example States
+
+<p align="center">
+  <img src="spritelet-identity-example/states/focused-coding.png" alt="Focused Coding" width="170" />
+  <img src="spritelet-identity-example/states/happy-planning.png" alt="Happy Planning" width="170" />
+  <img src="spritelet-identity-example/states/frustrated-debugging.png" alt="Frustrated Debugging" width="170" />
+</p>
+<p align="center">
+  <code>focused-coding</code> &nbsp;&nbsp;&nbsp;
+  <code>happy-planning</code> &nbsp;&nbsp;&nbsp;
+  <code>frustrated-debugging</code>
+</p>
 
 ## Environment
 
@@ -107,6 +125,10 @@ Both generation scripts support overrides with:
 Background behavior:
 - Background is intentionally model-chosen from state context (no forced transparency by default).
 - Keep emotional/work context in `--description` to influence scene and mood.
+
+Publish control:
+- `publish_spritelet_state.py --force-generate` always makes a new API image.
+- If the state already exists, `--force-generate` overwrites that state's current `spritelet_path`.
 
 ## License
 
