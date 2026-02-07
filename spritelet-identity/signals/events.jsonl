@@ -1,6 +1,1 @@
-{"type": "state_initialized", "spritelet_path": "", "updated_at": "2026-02-07T03:26:06Z"}
-{"type": "base_image_initialized", "spritelet_path": "assets/base.png", "updated_at": "2026-02-07T03:36:08Z"}
-{"type": "state_published", "simple_name": "focused-coding", "spritelet_path": "states/focused-coding.png", "reused": false, "updated_at": "2026-02-07T03:36:34Z"}
-{"type": "state_published", "simple_name": "happy-planning", "spritelet_path": "states/happy-planning.png", "reused": false, "updated_at": "2026-02-07T03:36:57Z"}
-{"type": "state_published", "simple_name": "frustrated-debugging", "spritelet_path": "states/frustrated-debugging.png", "reused": false, "updated_at": "2026-02-07T03:37:14Z"}
-{"type": "state_published", "simple_name": "happy-planning", "spritelet_path": "states/happy-planning.png", "reused": false, "updated_at": "2026-02-07T03:40:34Z"}
+{"type": "state_initialized", "spritelet_path": "", "updated_at": "2026-02-07T03:57:07Z"}
